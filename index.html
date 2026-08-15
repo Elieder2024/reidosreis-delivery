@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Rei dos Reis Delivery - Pizzaria em Balneário Camboriú</title>
+  
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <link rel="stylesheet" href="styles.css?v=1.0" />
+</head>
+<body>
+
+  <!-- MOBILE APP CONTAINER FRAME -->
+  <div class="mobile-app-shell">
+
+    <!-- RESTAURANT BRANDED HEADER -->
+    <header class="app-header brand-header">
+      <div class="brand-title-group">
+        <div class="brand-logo-circle">
+          👑
+        </div>
+        <div class="brand-name-box">
+          <h1>REI DOS REIS</h1>
+          <p><i class="fa-solid fa-pizza-slice text-gold"></i> Delivery em Balneário Camboriú • SC</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- DELIVERY / PICKUP TOGGLE BAR -->
+    <section class="fulfillment-bar">
+      <div class="fulfillment-toggle">
+        <button class="f-btn active" id="f-btn-delivery" onclick="setFulfillmentMode('delivery')">
+          <i class="fa-solid fa-motorcycle"></i> Entrega (Delivery)
+        </button>
+        <button class="f-btn" id="f-btn-pickup" onclick="setFulfillmentMode('pickup')">
+          <i class="fa-solid fa-store"></i> Retirar no Balcão
+        </button>
+      </div>
+      <div class="address-subbar">
+        <i class="fa-solid fa-map-pin text-gold"></i>
+        <span id="delivery-address-display">Entregar em: Centro, Balneário Camboriú (30-40 min)</span>
+      </div>
+    </section>
+
+    <!-- BANNER PROMO & CARDÁPIO DO DIA -->
+    <section class="today-menu-banner">
+      <div class="banner-card">
+        <span class="banner-badge">GRANDES PROMOÇÕES</span>
+        <h2>Pizzas Crocantes & Recheadas 🍕🔥</h2>
+        <p>Massa artesanal, ingredientes selecionados e entrega quentinha!</p>
+        <div class="banner-features">
+          <span><i class="fa-solid fa-circle-check text-gold"></i> Pizzas Grandes de 8 Fatias</span>
+          <span><i class="fa-solid fa-bolt text-gold"></i> Opção Meio a Meio em todas as pizzas</span>
+        </div>
+      </div>
+
+      <div class="christian-footer-banner">
+        "Louvado e engrandecido seja o nome do senhor Jesus Cristo 👑"
+      </div>
+    </section>
+
+    <!-- QUICK CATEGORY NAV TABS -->
+    <section class="categories-section">
+      <div class="categories-scroll" id="categories-container">
+        <button class="cat-pill active" data-cat="combos" onclick="scrollToSection('sec-combos', this)">
+          <span class="cat-emoji">🎁</span>
+          <span>Grandes Ofertas</span>
+        </button>
+        <button class="cat-pill" data-cat="pizzas" onclick="scrollToSection('sec-pizzas', this)">
+          <span class="cat-emoji">🍕</span>
+          <span>Pizzas Tradicionais</span>
+        </button>
+        <button class="cat-pill" data-cat="bebidas" onclick="scrollToSection('sec-bebidas', this)">
+          <span class="cat-emoji">🥤</span>
+          <span>Refrigerantes</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- MAIN APP CONTENT -->
+    <main class="feed-section">
+
+      <!-- SECTION 1: COMBOS / PROMOÇÕES -->
+      <section class="catalog-group" id="sec-combos">
+        <div class="group-header">
+          <h3>🎁 1. Ofertas & Combos Especiais</h3>
+          <p>A melhor combinação com refri geladinho para sua família</p>
+        </div>
+
+        <div id="combos-container">
+          <!-- JS Rendered Combos -->
+        </div>
+      </section>
+
+      <!-- SECTION 2: PIZZAS TRADICIONAIS -->
+      <section class="catalog-group" id="sec-pizzas">
+        <div class="group-header">
+          <h3>🍕 2. Cardápio de Pizzas Tradicionais</h3>
+          <p>Todas com 8 fatias bem recheadas (Feitas com ingredientes de qualidade)</p>
+        </div>
+
+        <div class="pizza-flavors-grid" id="flavors-container">
+          <!-- JS Rendered Flavors -->
+        </div>
+      </section>
+
+      <!-- SECTION 3: BEBIDAS -->
+      <section class="catalog-group" id="sec-bebidas">
+        <div class="group-header">
+          <h3>🥤 3. Bebidas & Refrigerantes</h3>
+          <p>Geladinhas para acompanhar sua pizza</p>
+        </div>
+
+        <div id="drinks-container">
+          <!-- JS Rendered Drinks -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- STICKY FLOATING CART BAR -->
+    <div class="sticky-cart-bar" id="sticky-cart-bar" style="display: none;" onclick="toggleCartDrawer()">
+      <div class="sticky-cart-info">
+        <div class="sticky-cart-count-badge" id="sticky-cart-count">0</div>
+        <div class="sticky-cart-text">
+          <span>Ver Meu Pedido</span>
+          <small id="sticky-cart-items-preview">Nenhum item</small>
+        </div>
+      </div>
+      <div style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 900;" id="sticky-cart-total">
+        R$ 0,00
+      </div>
+    </div>
+
+    <!-- BOTTOM APP NAVIGATION BAR -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="scrollToSection('sec-combos')">
+        <i class="fa-solid fa-pizza-slice"></i>
+        <span>Cardápio</span>
+      </button>
+      <button class="nav-item nav-item-cart" onclick="toggleCartDrawer()">
+        <div class="cart-icon-box">
+          <i class="fa-solid fa-basket-shopping"></i>
+          <span class="nav-cart-badge" id="bottom-cart-badge">0</span>
+        </div>
+        <span>Meu Pedido</span>
+      </button>
+      <button class="nav-item" onclick="openLoyaltyModal()">
+        <i class="fa-solid fa-crown text-gold"></i>
+        <span>Fidelidade</span>
+      </button>
+      <button class="nav-item" onclick="openMyOrdersModal()">
+        <i class="fa-solid fa-receipt"></i>
+        <span>Meus Pedidos</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- MODAL: PROGRAMA DE FIDELIDADE -->
+  <div class="modal-overlay" id="modal-loyalty">
+    <div class="modal-content" style="height: 100%; max-height: 100%; border-radius: 0;">
+      <div class="modal-header bg-gold">
+        <div>
+          <h3>👑 Clube Fidelidade Rei dos Reis</h3>
+          <span style="font-size: 0.8rem; opacity: 0.9;">R$ 1,00 gasto = 1 Ponto de Recompensa!</span>
+        </div>
+        <button class="btn-close-modal" onclick="closeLoyaltyModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="builder-body">
+        
+        <!-- STATE A: NÃO LOGADO -->
+        <div id="loyalty-auth-container">
+          <div style="text-align: center; background: #fffbe6; border: 1px dashed #f59e0b; padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+            <span style="font-size: 2.5rem;">👑</span>
+            <h4 style="font-size: 1.1rem; color: var(--color-dark); margin-top: 0.3rem;">Junte pontos e troque por pizza e refrigerante grátis!</h4>
+            <p style="font-size: 0.8rem; color: var(--color-gray); margin-top: 0.2rem;">Cadastre seu WhatsApp em 30 segundos e ganhe <strong>20 pontos de bônus</strong> na hora!</p>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+            <button type="button" class="btn btn-secondary btn-full active" id="btn-loyalty-tab-login" onclick="switchLoyaltyAuthTab('login')">Entrar na Minha Conta</button>
+            <button type="button" class="btn btn-secondary btn-full" id="btn-loyalty-tab-reg" onclick="switchLoyaltyAuthTab('reg')">Criar Nova Conta</button>
+          </div>
+
+          <!-- FORM: LOGIN -->
+          <form id="form-loyalty-login" onsubmit="handleLoyaltyLogin(event)">
+            <div class="form-group margin-top-sm">
+              <label for="loyalty-login-phone">Seu WhatsApp (Celular)</label>
+              <input type="tel" id="loyalty-login-phone" placeholder="(47) 98880-2254" required />
+            </div>
+            <div class="form-group margin-top-sm">
+              <label for="loyalty-login-pass">Sua Senha</label>
+              <input type="password" id="loyalty-login-pass" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn btn-gold btn-full margin-top-md">
+              <i class="fa-solid fa-right-to-bracket"></i> Entrar no Clube Fidelidade
+            </button>
+          </form>
+
+          <!-- FORM: CADASTRO -->
+          <form id="form-loyalty-register" onsubmit="handleLoyaltyRegister(event)" style="display: none;">
+            <div class="form-group margin-top-sm">
+              <label for="loyalty-reg-name">Seu Nome Completo</label>
+              <input type="text" id="loyalty-reg-name" placeholder="Ex: João Santos" required />
+            </div>
+            <div class="form-group margin-top-sm">
+              <label for="loyalty-reg-phone">Seu WhatsApp (DDD + Número)</label>
+              <input type="tel" id="loyalty-reg-phone" placeholder="(47) 98880-2254" required />
+            </div>
+            <div class="form-group margin-top-sm">
+              <label for="loyalty-reg-pass">Crie uma Senha Fácil</label>
+              <input type="password" id="loyalty-reg-pass" placeholder="Mínimo 3 digitos" required />
+            </div>
+            <button type="submit" class="btn btn-gold btn-full margin-top-md">
+              <i class="fa-solid fa-user-plus"></i> Criar Minha Conta & Ganhar 20 Pontos!
+            </button>
+          </form>
+        </div>
+
+        <!-- STATE B: LOGADO -->
+        <div id="loyalty-user-container" style="display: none;">
+          <div style="background: linear-gradient(135deg, #78350f 0%, #451a03 100%); color: #ffffff; padding: 1.25rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); margin-bottom: 1.5rem; border: 1px solid var(--color-accent-gold);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9;">CARTÃO FIDELIDADE REI DOS REIS</span>
+                <h3 id="loyalty-user-name" style="font-size: 1.2rem; font-weight: 800; font-family: var(--font-heading);">Cliente</h3>
+              </div>
+              <button onclick="handleLoyaltyLogout()" style="background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 0.3rem 0.6rem; border-radius: 12px; font-size: 0.7rem; font-weight: 700; cursor: pointer;">Sair</button>
+            </div>
+
+            <div style="margin-top: 1rem; display: flex; align-items: baseline; gap: 0.4rem;">
+              <span id="loyalty-user-points" style="font-size: 2.2rem; font-weight: 900; font-family: var(--font-heading); color: var(--color-accent-gold);">0</span>
+              <span style="font-size: 0.9rem; font-weight: 700;">Pontos Acumulados</span>
+            </div>
+            <small style="display: block; opacity: 0.85; font-size: 0.75rem; margin-top: 0.2rem;">Ganhe +1 ponto a cada R$ 1,00 em pedidos na pizzaria!</small>
+          </div>
+
+          <h4 style="font-size: 1rem; color: var(--color-dark); margin-bottom: 0.75rem;"><i class="fa-solid fa-gift text-gold"></i> Resgatar Prêmios com Seus Pontos:</h4>
+
+          <div id="rewards-catalog-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- JS Rendered Rewards -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MONTAR PIZZA / ESCOLHER SABORES -->
+  <div class="modal-overlay" id="modal-pizza-builder">
+    <div class="modal-content" style="height: 100%; max-height: 100%; border-radius: 0;">
+      <div class="modal-header bg-gold">
+        <div>
+          <h3 id="builder-modal-title">Escolher Sabores da Pizza</h3>
+          <span style="font-size: 0.8rem; opacity: 0.9;" id="builder-modal-price">Pizza Grande (8 Fatias)</span>
+        </div>
+        <button class="btn-close-modal" onclick="closePizzaBuilderModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="builder-body">
+        
+        <!-- PASSO 1: TIPO DE SABOR -->
+        <div class="catalog-group">
+          <h4 class="step-header">1. Quantidade de Sabores</h4>
+          <div class="options-group">
+            <label class="radio-option">
+              <input type="radio" name="pizza-split-mode" value="1" onchange="togglePizzaSplitMode('1')" checked />
+              <div class="radio-content">
+                <strong>🍕 1 Sabor Inteiro</strong>
+                <small>Toda a pizza com o seu sabor favorito</small>
+              </div>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="pizza-split-mode" value="2" onchange="togglePizzaSplitMode('2')" />
+              <div class="radio-content">
+                <strong>🌓 2 Sabores (Meio a Meio)</strong>
+                <small>Escolha 2 sabores para metade/metade</small>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- PASSO 2: SELEÇÃO DO 1º SABOR -->
+        <div class="catalog-group margin-top-md">
+          <h4 class="step-header" id="label-flavor-1">2. Escolha o Sabor da Pizza <span class="text-gold">*</span></h4>
+          <div class="options-group" id="flavor-1-container">
+            <!-- JS Rendered Flavors Radio 1 -->
+          </div>
+        </div>
+
+        <!-- PASSO 3: SELEÇÃO DO 2º SABOR (Se Meio a Meio) -->
+        <div class="catalog-group margin-top-md" id="section-flavor-2" style="display: none;">
+          <h4 class="step-header">3. Escolha o 2º Sabor (Metade 2) <span class="text-gold">*</span></h4>
+          <div class="options-group" id="flavor-2-container">
+            <!-- JS Rendered Flavors Radio 2 -->
+          </div>
+        </div>
+
+        <!-- PASSO 4: BORDA RECHEADA -->
+        <div class="catalog-group margin-top-md">
+          <h4 class="step-header">4. Borda Recheada <span style="font-size: 0.75rem; font-weight: 500; color: var(--color-gray);">(Opcional)</span></h4>
+          <div class="options-group">
+            <label class="radio-option">
+              <input type="radio" name="pizza-border" value="Sem Borda" data-price="0.00" onchange="calcPizzaBuilderTotal()" checked />
+              <div class="radio-content">
+                <strong>❌ Sem Borda Recheada</strong>
+                <small>Massa tradicional quentinha</small>
+              </div>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="pizza-border" value="Borda de Catupiry" data-price="6.00" onchange="calcPizzaBuilderTotal()" />
+              <div class="radio-content">
+                <strong>🧀 Borda de Catupiry (+ R$ 6,00)</strong>
+                <small>Recheada com catupiry cremoso</small>
+              </div>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="pizza-border" value="Borda de Cheddar" data-price="6.00" onchange="calcPizzaBuilderTotal()" />
+              <div class="radio-content">
+                <strong>🧀 Borda de Cheddar (+ R$ 6,00)</strong>
+                <small>Recheada com queijo cheddar</small>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- PASSO 5: OBSERVAÇÕES -->
+        <div class="catalog-group margin-top-md">
+          <h4 class="step-header">5. Observações do Pedido</h4>
+          <div class="form-group">
+            <textarea id="pizza-notes" rows="2" placeholder="Ex: Tirar a cebola de metade da pizza..."></textarea>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="builder-footer">
+        <div>
+          <small style="font-size: 0.72rem; color: var(--color-gray); display: block;">VALOR TOTAL:</small>
+          <strong id="builder-total-price" style="font-size: 1.25rem; color: var(--color-primary); font-family: var(--font-heading);">R$ 49,90</strong>
+        </div>
+        <button class="btn btn-gold" onclick="addPizzaToCartFromBuilder()">
+          <i class="fa-solid fa-cart-plus"></i> Adicionar ao Pedido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER: SEU PEDIDO -->
+  <div class="drawer-overlay" id="cart-drawer-overlay" onclick="toggleCartDrawer()"></div>
+  <aside class="modal-content" id="cart-drawer" style="position: fixed; right: 0; top: 0; bottom: 0; height: 100%; max-width: 420px; border-radius: 0; transform: translateX(100%); transition: transform 0.3s ease; z-index: 105;">
+    <div class="modal-header bg-gold">
+      <h3><i class="fa-solid fa-basket-shopping"></i> Seu Pedido na Pizzaria</h3>
+      <button class="btn-close-modal" onclick="toggleCartDrawer()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="builder-body">
+      
+      <!-- Step 1: Cart Items List -->
+      <div id="cart-step-items">
+        <div id="cart-items-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <!-- JS Rendered Cart Items -->
+        </div>
+
+        <div class="form-group margin-top-md">
+          <label for="checkout-address-input"><i class="fa-solid fa-location-dot text-gold"></i> Endereço Completo para Entrega em BC</label>
+          <input type="text" id="checkout-address-input" placeholder="Rua / Av., Número, Ap., Ponto de ref." />
+        </div>
+
+        <div class="form-group margin-top-sm">
+          <label for="checkout-bairro-bc"><i class="fa-solid fa-map text-gold"></i> Selecione seu Bairro (Balneário Camboriú)</label>
+          <select id="checkout-bairro-bc" onchange="updateDeliveryFeeBC()">
+            <option value="Centro" data-fee="3.00" selected>Centro - Taxa R$ 3,00</option>
+            <option value="Pioneiros" data-fee="4.00">Pioneiros - Taxa R$ 4,00</option>
+            <option value="Nações" data-fee="4.00">Nações - Taxa R$ 4,00</option>
+            <option value="Estados" data-fee="4.00">Estados - Taxa R$ 4,00</option>
+            <option value="Ariribá" data-fee="5.00">Ariribá - Taxa R$ 5,00</option>
+            <option value="Vila Real" data-fee="5.00">Vila Real - Taxa R$ 5,00</option>
+            <option value="Municípios" data-fee="5.00">Municípios - Taxa R$ 5,00</option>
+            <option value="Barra / Barra Sul" data-fee="6.00">Barra / Barra Sul - Taxa R$ 6,00</option>
+            <option value="Praia dos Amores" data-fee="7.00">Praia dos Amores - Taxa R$ 7,00</option>
+          </select>
+        </div>
+
+        <div class="form-group margin-top-sm">
+          <label for="checkout-payment-method"><i class="fa-solid fa-wallet text-gold"></i> Forma de Pagamento</label>
+          <select id="checkout-payment-method">
+            <option value="pix">⚡ PIX (Aprovação Instantânea)</option>
+            <option value="card">💳 Cartão de Crédito/Débito na Entrega</option>
+            <option value="cash">💵 Dinheiro (Troco na Entrega)</option>
+          </select>
+        </div>
+
+        <div style="background: #fffbe6; border: 1px solid var(--border-color); padding: 1rem; border-radius: var(--radius-sm); margin-top: 1rem;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+            <span>Subtotal:</span>
+            <span id="cart-subtotal">R$ 0,00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-top: 0.3rem;">
+            <span>Taxa de Entrega (BC):</span>
+            <span id="cart-fee-display">R$ 3,00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 800; margin-top: 0.5rem; border-top: 1px dashed var(--border-color); padding-top: 0.5rem;">
+            <span>Total a Pagar:</span>
+            <strong id="cart-total-price" class="text-gold">R$ 0,00</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: PIX Confirmation -->
+      <div id="cart-step-pix" style="display: none;">
+        <div style="text-align: center; background: #fffbe6; border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md);">
+          <div style="font-size: 0.8rem; font-weight: 900; color: var(--color-primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-qrcode"></i> CHAVE PIX - REI DOS REIS</div>
+          <p style="font-size: 0.8rem; color: var(--color-gray);">Escaneie o QR Code abaixo ou copie a chave para pagar no seu banco:</p>
+          
+          <div style="margin: 1rem 0;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=00020126580014br.gov.bcb.pix0136reidosreis-bc-santa-catarina-pix" alt="QR Code PIX Rei dos Reis" style="border-radius: 12px; border: 1px solid #ddd;" />
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+            <input type="text" readonly id="pix-copy-input" value="00020126580014br.gov.bcb.pix0136reidosreis-pix-chave-99120" style="flex: 1; font-size: 0.75rem;" />
+            <button class="btn btn-secondary" onclick="copyPixCode()"><i class="fa-solid fa-copy"></i> Copiar</button>
+          </div>
+
+          <button class="btn btn-gold btn-full margin-top-md" onclick="confirmPaymentAndSendToKitchen()">
+            <i class="fa-solid fa-check-circle"></i> Enviar Pedido para a Pizzaria!
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="builder-footer" id="cart-footer-actions">
+      <button class="btn btn-secondary" onclick="clearCart()">Limpar</button>
+      <button class="btn btn-gold btn-full" onclick="proceedToCheckoutPayment()">
+        <i class="fa-solid fa-arrow-right"></i> Finalizar Pedido
+      </button>
+    </div>
+  </aside>
+
+  <!-- MODAL: MEUS PEDIDOS -->
+  <div class="modal-overlay" id="modal-my-orders">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header bg-dark">
+        <h3><i class="fa-solid fa-receipt text-gold"></i> Acompanhe seu Pedido de Pizza</h3>
+        <button class="btn-close-modal" onclick="closeMyOrdersModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="builder-body">
+        <div id="user-orders-tracker-list">
+          <!-- JS Rendered Orders -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- JavaScript -->
+  <script src="app.js?v=1.0"></script>
+</body>
+</html>
