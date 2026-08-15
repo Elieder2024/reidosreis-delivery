@@ -1,0 +1,6 @@
+[
+  { "id": "rew_1", "name": "🧀 Borda Recheada Grátis", "points": 40, "desc": "Borda recheada de Catupiry ou Cheddar grátis na sua pizza", "type": "extra", "value": 6.00, "icon": "🧀" },
+  { "id": "rew_2", "name": "🥤 Refri Kuat 2 Litros Grátis", "points": 60, "desc": "1x Refrigerante Kuat 2 Litros", "type": "drink", "value": 10.00, "icon": "🥤" },
+  { "id": "rew_3", "name": "🏷️ Cupom de R$ 15,00 de Desconto", "points": 100, "desc": "Desconto de R$ 15,00 no total do pedido", "type": "discount", "value": 15.00, "icon": "🏷️" },
+  { "id": "rew_4", "name": "🍕 1 Pizza Grande Grátis", "points": 200, "desc": "1x Pizza Grande (8 Fatias) de qualquer sabor tradicional", "type": "pizza", "value": 49.90, "icon": "🍕" }
+]
