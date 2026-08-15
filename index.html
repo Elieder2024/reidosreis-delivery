@@ -263,81 +263,8 @@
         <button class="btn-close-modal" onclick="closePizzaBuilderModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <div class="builder-body">
-        
-        <!-- PASSO 1: TIPO DE SABOR -->
-        <div class="catalog-group">
-          <h4 class="step-header">1. Quantidade de Sabores</h4>
-          <div class="options-group">
-            <label class="radio-option">
-              <input type="radio" name="pizza-split-mode" value="1" onchange="togglePizzaSplitMode('1')" checked />
-              <div class="radio-content">
-                <strong>🍕 1 Sabor Inteiro</strong>
-                <small>Toda a pizza com o seu sabor favorito</small>
-              </div>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="pizza-split-mode" value="2" onchange="togglePizzaSplitMode('2')" />
-              <div class="radio-content">
-                <strong>🌓 2 Sabores (Meio a Meio)</strong>
-                <small>Escolha 2 sabores para metade/metade</small>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <!-- PASSO 2: SELEÇÃO DO 1º SABOR -->
-        <div class="catalog-group margin-top-md">
-          <h4 class="step-header" id="label-flavor-1">2. Escolha o Sabor da Pizza <span class="text-gold">*</span></h4>
-          <div class="options-group" id="flavor-1-container">
-            <!-- JS Rendered Flavors Radio 1 -->
-          </div>
-        </div>
-
-        <!-- PASSO 3: SELEÇÃO DO 2º SABOR (Se Meio a Meio) -->
-        <div class="catalog-group margin-top-md" id="section-flavor-2" style="display: none;">
-          <h4 class="step-header">3. Escolha o 2º Sabor (Metade 2) <span class="text-gold">*</span></h4>
-          <div class="options-group" id="flavor-2-container">
-            <!-- JS Rendered Flavors Radio 2 -->
-          </div>
-        </div>
-
-        <!-- PASSO 4: BORDA RECHEADA -->
-        <div class="catalog-group margin-top-md">
-          <h4 class="step-header">4. Borda Recheada <span style="font-size: 0.75rem; font-weight: 500; color: var(--color-gray);">(Opcional)</span></h4>
-          <div class="options-group">
-            <label class="radio-option">
-              <input type="radio" name="pizza-border" value="Sem Borda" data-price="0.00" onchange="calcPizzaBuilderTotal()" checked />
-              <div class="radio-content">
-                <strong>❌ Sem Borda Recheada</strong>
-                <small>Massa tradicional quentinha</small>
-              </div>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="pizza-border" value="Borda de Catupiry" data-price="6.00" onchange="calcPizzaBuilderTotal()" />
-              <div class="radio-content">
-                <strong>🧀 Borda de Catupiry (+ R$ 6,00)</strong>
-                <small>Recheada com catupiry cremoso</small>
-              </div>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="pizza-border" value="Borda de Cheddar" data-price="6.00" onchange="calcPizzaBuilderTotal()" />
-              <div class="radio-content">
-                <strong>🧀 Borda de Cheddar (+ R$ 6,00)</strong>
-                <small>Recheada com queijo cheddar</small>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <!-- PASSO 5: OBSERVAÇÕES -->
-        <div class="catalog-group margin-top-md">
-          <h4 class="step-header">5. Observações do Pedido</h4>
-          <div class="form-group">
-            <textarea id="pizza-notes" rows="2" placeholder="Ex: Tirar a cebola de metade da pizza..."></textarea>
-          </div>
-        </div>
-
+      <div class="builder-body" id="pizza-builder-dynamic-body">
+        <!-- JS Rendered Dynamic Pizza Builder Body -->
       </div>
 
       <div class="builder-footer">
@@ -464,6 +391,6 @@
   <div class="toast-container" id="toast-container"></div>
 
   <!-- JavaScript -->
-  <script src="app.js?v=1.0"></script>
+  <script src="app.js?v=1.1"></script>
 </body>
 </html>
