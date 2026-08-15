@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rei dos Reis Delivery - Painel da Cozinha & Dono</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <link rel="stylesheet" href="styles.css?v=1.0" />
+  <style>
+    body {
+      background: #1c1917;
+      display: block;
+    }
+    .admin-full-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #ffffff;
+      min-height: 100vh;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+    .admin-top-bar {
+      background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+      color: #ffffff;
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--color-accent-gold);
+    }
+    .admin-top-bar h1 {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 900;
+    }
+    .status-badge {
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: inline-block;
+    }
+    .badge-preparo { background: #fef3c7; color: #92400e; }
+    .badge-entrega { background: #dbeafe; color: #1e40af; }
+    .badge-entregue { background: #dcfce7; color: #166534; }
+  </style>
+</head>
+<body>
+
+  <!-- ADMIN / KITCHEN CONTAINER -->
+  <div class="admin-full-container" id="admin-main-wrapper">
+    
+    <!-- HEADER -->
+    <header class="admin-top-bar">
+      <h1><i class="fa-solid fa-pizza-slice"></i> PAINEL DO DONO - REI DOS REIS</h1>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span style="font-size: 0.82rem; background: rgba(255,255,255,0.2); padding: 0.35rem 0.75rem; border-radius: 20px;" id="owner-logged-text">Dono: dono@reidosreis.com.br</span>
+        <button class="btn btn-secondary btn-sm" onclick="handleOwnerLogoutPage()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+      </div>
+    </header>
+
+    <!-- TABS -->
+    <div class="partner-tabs" style="padding: 1rem 1.75rem; flex-wrap: wrap; gap: 0.5rem; background: #fffbe6; border-bottom: 1px solid #fde68a;">
+      <button type="button" class="partner-tab-btn active" id="btn-tab-orders" onclick="switchAdminPageTab('orders', this)">
+        <i class="fa-solid fa-bell"></i> Pedidos de Pizza <span class="badge-pending-count" id="admin-orders-badge">0</span>
+      </button>
+      <button type="button" class="partner-tab-btn" id="btn-tab-combos" onclick="switchAdminPageTab('combos', this)">
+        <i class="fa-solid fa-gift"></i> Preços das Ofertas
+      </button>
+      <button type="button" class="partner-tab-btn" id="btn-tab-flavors" onclick="switchAdminPageTab('flavors', this)">
+        <i class="fa-solid fa-pizza-slice"></i> Sabores de Pizzas
+      </button>
+      <button type="button" class="partner-tab-btn" id="btn-tab-drinks" onclick="switchAdminPageTab('drinks', this)">
+        <i class="fa-solid fa-bottle-water"></i> Bebidas & Refris
+      </button>
+      <button type="button" class="partner-tab-btn" id="btn-tab-loyalty" onclick="switchAdminPageTab('loyalty', this)">
+        <i class="fa-solid fa-crown text-gold"></i> Clientes & Pontos
+      </button>
+      <a href="index.html" target="_blank" class="partner-tab-btn" style="text-decoration: none; margin-left: auto; background: #e2e8f0; color: #1e293b;">
+        <i class="fa-solid fa-external-link"></i> Abrir App do Cliente
+      </a>
+    </div>
+
+    <!-- BODY -->
+    <div style="padding: 1.75rem;">
+      
+      <!-- TAB 1: PEDIDOS -->
+      <div class="partner-tab-pane active" id="pane-admin-orders">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-dark);">Pedidos em Tempo Real</h3>
+            <p style="font-size: 0.8rem; color: var(--color-gray);">Acompanhe os pedidos de pizza chegando do forno para entrega em Balneário Camboriú</p>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary btn-sm" onclick="playNotificationSound('new_order')"><i class="fa-solid fa-volume-high text-gold"></i> Testar Som</button>
+            <button class="btn btn-secondary btn-sm" onclick="renderAdminPageOrders()"><i class="fa-solid fa-rotate"></i> Atualizar Pedidos</button>
+          </div>
+        </div>
+
+        <div class="orders-table-wrapper">
+          <table class="admin-orders-table">
+            <thead>
+              <tr>
+                <th>ID / Data</th>
+                <th>Cliente / Endereço (BC)</th>
+                <th>Pizzas / Detalhes</th>
+                <th>Total</th>
+                <th>Status Atual</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="admin-orders-table-body">
+              <!-- JS Rendered Orders -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: PREÇOS DAS OFERTAS -->
+      <div class="partner-tab-pane" id="pane-admin-combos">
+        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-dark); margin-bottom: 0.5rem;">Alterar Preços dos Combos & Ofertas</h3>
+        <p style="font-size: 0.8rem; color: var(--color-gray); margin-bottom: 1.5rem;">Altere os valores das Ofertas 01 e 02 em tempo real.</p>
+
+        <div class="orders-table-wrapper">
+          <table class="admin-orders-table">
+            <thead>
+              <tr>
+                <th>Oferta / Descrição</th>
+                <th>Preço Atual (R$)</th>
+                <th>Alterar Valor</th>
+              </tr>
+            </thead>
+            <tbody id="admin-combos-table-body">
+              <!-- JS Rendered Combos -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: SABORES DE PIZZAS -->
+      <div class="partner-tab-pane" id="pane-admin-flavors">
+        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-dark); margin-bottom: 0.5rem;">Sabores de Pizzas Tradicionais</h3>
+        <p style="font-size: 0.8rem; color: var(--color-gray); margin-bottom: 1.25rem;">Adicione ou edite os sabores tradicionais da pizzaria.</p>
+
+        <form onsubmit="handleAdminAddFlavor(event)" style="background: #fffbe6; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #fde68a; margin-bottom: 1.5rem;">
+          <input type="hidden" id="admin-flav-id" value="" />
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label for="admin-flav-name">Nome do Sabor</label>
+              <input type="text" id="admin-flav-name" placeholder="Ex: Portuguesa Especial" required />
+            </div>
+            <div class="form-group" style="flex: 3;">
+              <label for="admin-flav-desc">Ingredientes / Descrição</label>
+              <input type="text" id="admin-flav-desc" placeholder="Molho de tomate, presunto, mussarela..." required />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="admin-flav-price">Preço Pizza (R$)</label>
+              <input type="number" step="0.01" id="admin-flav-price" placeholder="49.90" required />
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+              <button type="submit" class="btn btn-gold"><i class="fa-solid fa-plus"></i> Salvar Sabor</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="orders-table-wrapper">
+          <table class="admin-orders-table">
+            <thead>
+              <tr>
+                <th>Sabor</th>
+                <th>Ingredientes</th>
+                <th>Preço</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="admin-flavors-table-body">
+              <!-- JS Rendered Flavors -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 4: BEBIDAS & REFRIS -->
+      <div class="partner-tab-pane" id="pane-admin-drinks">
+        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-dark); margin-bottom: 0.5rem;">Bebidas & Refrigerantes</h3>
+        <p style="font-size: 0.8rem; color: var(--color-gray); margin-bottom: 1.25rem;">Gerencie os refrigerantes de 2L e latas.</p>
+
+        <form onsubmit="handleAdminAddDrink(event)" style="background: #fffbe6; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #fde68a; margin-bottom: 1.5rem;">
+          <input type="hidden" id="admin-drink-id" value="" />
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label for="admin-drink-name">Nome da Bebida</label>
+              <input type="text" id="admin-drink-name" placeholder="Ex: 🥤 Guaraná Kuat 2 Litros" required />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="admin-drink-price">Preço (R$)</label>
+              <input type="number" step="0.01" id="admin-drink-price" placeholder="10.00" required />
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+              <button type="submit" class="btn btn-gold"><i class="fa-solid fa-plus"></i> Salvar Bebida</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="orders-table-wrapper">
+          <table class="admin-orders-table">
+            <thead>
+              <tr>
+                <th>Bebida / Refri</th>
+                <th>Preço</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="admin-drinks-table-body">
+              <!-- JS Rendered Drinks -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 5: CLIENTES & PONTOS -->
+      <div class="partner-tab-pane" id="pane-admin-loyalty">
+        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-dark); margin-bottom: 0.5rem;">👑 Clube Fidelidade - Clientes e Prêmios</h3>
+        <p style="font-size: 0.8rem; color: var(--color-gray); margin-bottom: 1.25rem;">Acompanhe o saldo dos clientes e configure os pontos necessários nos prêmios.</p>
+
+        <div style="background: #fffbe6; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #fde68a; margin-bottom: 2rem;">
+          <h4 style="font-size: 1rem; color: var(--color-dark); margin-bottom: 0.75rem;"><i class="fa-solid fa-gift text-gold"></i> Configurar Produtos e Pontos de Resgate</h4>
+
+          <form onsubmit="handleAdminAddReward(event)">
+            <input type="hidden" id="admin-reward-id" value="" />
+            <div class="form-row">
+              <div class="form-group" style="flex: 2;">
+                <label for="admin-reward-name">Nome do Prêmio / Produto</label>
+                <input type="text" id="admin-reward-name" placeholder="Ex: 🍕 1 Pizza Grande Grátis" required />
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="admin-reward-points">Pontos Exigidos</label>
+                <input type="number" id="admin-reward-points" placeholder="200" required />
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="admin-reward-value">Valor Equivalente (R$)</label>
+                <input type="number" step="0.01" id="admin-reward-value" placeholder="49.90" required />
+              </div>
+              <div style="display: flex; align-items: flex-end;">
+                <button type="submit" class="btn btn-gold"><i class="fa-solid fa-plus"></i> Salvar Prêmio</button>
+              </div>
+            </div>
+          </form>
+
+          <div class="orders-table-wrapper margin-top-md">
+            <table class="admin-orders-table">
+              <thead>
+                <tr>
+                  <th>Prêmio</th>
+                  <th>Pontos Exigidos</th>
+                  <th>Valor Equivalente</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="admin-rewards-table-body">
+                <!-- JS Rendered Rewards -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <h4 style="font-size: 1rem; color: var(--color-dark); margin-bottom: 0.75rem;"><i class="fa-solid fa-users text-gold"></i> Clientes Cadastrados & Saldo de Pontos</h4>
+        <div class="orders-table-wrapper">
+          <table class="admin-orders-table">
+            <thead>
+              <tr>
+                <th>Cliente / Nome</th>
+                <th>WhatsApp</th>
+                <th>Saldo de Pontos</th>
+                <th>Ajustar Pontos</th>
+              </tr>
+            </thead>
+            <tbody id="admin-customers-table-body">
+              <!-- JS Rendered Customers -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: LOGIN DO DONO -->
+  <div class="modal-overlay" id="modal-admin-login">
+    <div class="modal-content" style="max-width: 420px;">
+      <div class="modal-header bg-gold">
+        <h3><i class="fa-solid fa-lock text-gold"></i> Login do Dono - Rei dos Reis</h3>
+      </div>
+      <div class="builder-body">
+        <p style="font-size: 0.8rem; color: var(--color-gray); margin-bottom: 1rem;">Digite seu e-mail e senha de proprietário para acessar o painel de controle da pizzaria.</p>
+
+        <form onsubmit="handleAdminPageLogin(event)">
+          <div class="form-group margin-top-sm">
+            <label for="login-owner-email">E-mail do Dono</label>
+            <input type="email" id="login-owner-email" value="dono@reidosreis.com.br" required />
+          </div>
+
+          <div class="form-group margin-top-sm">
+            <label for="login-owner-password">Senha de Acesso</label>
+            <input type="password" id="login-owner-password" value="123" required />
+          </div>
+
+          <button type="submit" class="btn btn-gold btn-full margin-top-md">
+            <i class="fa-solid fa-right-to-bracket"></i> Entrar no Painel da Pizzaria
+          </button>
+        </form>
+
+        <button class="btn btn-secondary btn-full margin-top-sm" onclick="fillAdminCredentialsFast()">
+          ⚡ Preenchimento Rápido de Teste
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- JS CODE -->
+  <script>
+    const OWNER_CREDENTIALS = {
+      email: 'dono@reidosreis.com.br',
+      password: '123'
+    };
+
+    let adminState = {
+      orders: [],
+      combos: [],
+      flavors: [],
+      drinks: [],
+      customers: [],
+      rewards: []
+    };
+
+    let lastOrdersCount = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAdminAuth();
+      setInterval(loadAdminData, 20000);
+      window.addEventListener('storage', loadAdminData);
+    });
+
+    function checkAdminAuth() {
+      const isAuth = sessionStorage.getItem('reidosreis_owner_auth') === 'true';
+      const loginModal = document.getElementById('modal-admin-login');
+      if (isAuth) {
+        if (loginModal) {
+          loginModal.classList.remove('active');
+          loginModal.style.display = 'none';
+        }
+        loadAdminData();
+      } else {
+        if (loginModal) {
+          loginModal.classList.add('active');
+          loginModal.style.display = 'flex';
+        }
+      }
+    }
+
+    function handleAdminPageLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-owner-email').value.trim().toLowerCase();
+      const pass = document.getElementById('login-owner-password').value.trim();
+
+      if (email === OWNER_CREDENTIALS.email && pass === OWNER_CREDENTIALS.password) {
+        sessionStorage.setItem('reidosreis_owner_auth', 'true');
+        showToast('Login realizado com sucesso! Bem-vindo ao Rei dos Reis.', 'success');
+        checkAdminAuth();
+      } else {
+        showToast('E-mail ou senha incorretos!', 'warning');
+      }
+    }
+
+    function fillAdminCredentialsFast() {
+      document.getElementById('login-owner-email').value = OWNER_CREDENTIALS.email;
+      document.getElementById('login-owner-password').value = OWNER_CREDENTIALS.password;
+    }
+
+    function handleOwnerLogoutPage() {
+      sessionStorage.removeItem('reidosreis_owner_auth');
+      location.reload();
+    }
+
+    function playNotificationSound(type = 'new_order') {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+
+        if (type === 'new_order') {
+          const notes = [659.25, 880.00, 1046.50];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            const startTime = now + (idx * 0.15);
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.4, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + 0.35);
+          });
+        }
+      } catch(e) {}
+    }
+
+    async function loadAdminData() {
+      // Orders
+      try {
+        const res = await fetch('/api/orders');
+        if (res.ok) {
+          const parsed = await res.json();
+          if (parsed.length > lastOrdersCount && lastOrdersCount !== 0) {
+            showToast(`🔔 NOVO PEDIDO DE PIZZA CHEGOU! (${parsed[0].id})`, 'success');
+            playNotificationSound('new_order');
+          }
+          lastOrdersCount = parsed.length;
+          adminState.orders = parsed;
+        }
+      } catch(e) {}
+
+      // Combos
+      try {
+        const resC = await fetch('/api/combos');
+        if (resC.ok) adminState.combos = await resC.json();
+      } catch(e) {}
+
+      // Flavors
+      try {
+        const resF = await fetch('/api/flavors');
+        if (resF.ok) adminState.flavors = await resF.json();
+      } catch(e) {}
+
+      // Drinks
+      try {
+        const resD = await fetch('/api/drinks');
+        if (resD.ok) adminState.drinks = await resD.json();
+      } catch(e) {}
+
+      // Customers & Rewards
+      try {
+        const resCust = await fetch('/api/customers/list');
+        if (resCust.ok) adminState.customers = await resCust.json();
+
+        const resRew = await fetch('/api/rewards');
+        if (resRew.ok) adminState.rewards = await resRew.json();
+      } catch(e) {}
+
+      renderAdminPageOrders();
+      renderAdminCombosTable();
+      renderAdminFlavorsTable();
+      renderAdminDrinksTable();
+      renderAdminLoyaltyTables();
+    }
+
+    function switchAdminPageTab(tab, btn) {
+      document.querySelectorAll('.partner-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.partner-tab-pane').forEach(p => p.classList.remove('active'));
+      
+      btn.classList.add('active');
+      const pane = document.getElementById(`pane-admin-${tab}`);
+      if (pane) pane.classList.add('active');
+    }
+
+    function renderAdminPageOrders() {
+      const badge = document.getElementById('admin-orders-badge');
+      if (badge) badge.innerText = adminState.orders.length;
+
+      const tbody = document.getElementById('admin-orders-table-body');
+      if (!tbody) return;
+
+      if (adminState.orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--color-gray);">Nenhum pedido de pizza recebido hoje.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = adminState.orders.map(o => {
+        let badgeClass = 'badge-preparo';
+        let statusLabel = '🍳 Na Fornalha';
+        if (o.status === 'SAIU_ENTREGA') {
+          badgeClass = 'badge-entrega';
+          statusLabel = '🛵 Saiu p/ Entrega';
+        } else if (o.status === 'ENTREGUE') {
+          badgeClass = 'badge-entregue';
+          statusLabel = '🎉 Entregue';
+        }
+
+        const priceNum = parseFloat(o.total) || 0;
+
+        return `
+          <tr>
+            <td>
+              <strong style="color: var(--color-primary);">${o.id}</strong><br/>
+              <small style="color: var(--color-gray);">${o.date || ''}</small>
+            </td>
+            <td>
+              <strong>${o.clientName || 'Cliente'}</strong><br/>
+              <small style="color: var(--color-gray);">${o.address}</small><br/>
+              <small style="color: var(--color-primary); font-weight: 700;">📱 ${o.clientPhone || 'Não informado'}</small>
+            </td>
+            <td><span style="font-size: 0.82rem; font-weight: 600;">${o.items}</span></td>
+            <td><strong style="color: var(--color-primary);">R$ ${priceNum.toFixed(2).replace('.', ',')}</strong></td>
+            <td><span class="status-badge ${badgeClass}">${statusLabel}</span></td>
+            <td>
+              ${o.status === 'EM_PREPARO' ? `
+                <button class="btn btn-secondary btn-sm" onclick="advanceOrderStatusAdmin('${o.id}', 'SAIU_ENTREGA')">
+                  🛵 Enviar p/ Entrega
+                </button>
+              ` : o.status === 'SAIU_ENTREGA' ? `
+                <button class="btn btn-primary btn-sm" onclick="advanceOrderStatusAdmin('${o.id}', 'ENTREGUE')">
+                  🎉 Marcar Entregue
+                </button>
+              ` : `
+                <span style="color: #166534; font-weight: 800; font-size: 0.8rem;">✓ Concluído</span>
+              `}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function advanceOrderStatusAdmin(orderId, nextStatus) {
+      try {
+        const res = await fetch('/api/orders/update-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: orderId, status: nextStatus })
+        });
+        if (res.ok) {
+          showToast(`Status do pedido ${orderId} atualizado!`, 'success');
+          loadAdminData();
+        }
+      } catch(e) {
+        showToast('Erro ao atualizar status.', 'warning');
+      }
+    }
+
+    function renderAdminCombosTable() {
+      const tbody = document.getElementById('admin-combos-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = adminState.combos.map(c => {
+        const pNum = parseFloat(c.price) || 0;
+        return `
+          <tr>
+            <td>
+              <strong>${c.name}</strong><br/>
+              <small style="color: var(--color-gray);">${c.desc}</small>
+            </td>
+            <td><strong style="color: var(--color-primary); font-size: 1.05rem;">R$ ${pNum.toFixed(2).replace('.', ',')}</strong></td>
+            <td>
+              <div style="display: flex; gap: 0.4rem;">
+                <input type="number" step="0.01" id="combo-price-input-${c.id}" value="${pNum.toFixed(2)}" style="width: 90px; padding: 0.3rem; font-size: 0.82rem;" />
+                <button class="btn btn-gold btn-sm" onclick="saveComboPriceAdmin('${c.id}')">Salvar</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function saveComboPriceAdmin(id) {
+      const input = document.getElementById(`combo-price-input-${id}`);
+      if (!input) return;
+      const newPrice = parseFloat(input.value);
+
+      try {
+        const res = await fetch('/api/combos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, price: newPrice })
+        });
+        if (res.ok) {
+          showToast('Preço da oferta atualizado no cardápio!', 'success');
+          loadAdminData();
+        }
+      } catch(e) {}
+    }
+
+    function renderAdminFlavorsTable() {
+      const tbody = document.getElementById('admin-flavors-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = adminState.flavors.map(f => {
+        const pNum = parseFloat(f.price) || 0;
+        return `
+          <tr>
+            <td><strong>🍕 ${f.name}</strong></td>
+            <td>${f.desc}</td>
+            <td><strong style="color: var(--color-primary);">R$ ${pNum.toFixed(2).replace('.', ',')}</strong></td>
+            <td>
+              <button class="btn btn-secondary btn-sm" onclick="editFlavorAdmin('${f.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
+              <button class="btn btn-secondary btn-sm" style="color: #ef4444;" onclick="deleteFlavorAdmin('${f.id}')"><i class="fa-solid fa-trash"></i> Excluir</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function handleAdminAddFlavor(e) {
+      e.preventDefault();
+      const id = document.getElementById('admin-flav-id').value;
+      const name = document.getElementById('admin-flav-name').value.trim();
+      const desc = document.getElementById('admin-flav-desc').value.trim();
+      const price = parseFloat(document.getElementById('admin-flav-price').value);
+
+      try {
+        const res = await fetch('/api/flavors', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, name, desc, price })
+        });
+        if (res.ok) {
+          showToast('Sabor de pizza salvo!', 'success');
+          document.getElementById('admin-flav-id').value = '';
+          document.getElementById('admin-flav-name').value = '';
+          document.getElementById('admin-flav-desc').value = '';
+          document.getElementById('admin-flav-price').value = '';
+          loadAdminData();
+        }
+      } catch(e) {}
+    }
+
+    function editFlavorAdmin(id) {
+      const f = adminState.flavors.find(item => item.id === id);
+      if (!f) return;
+      document.getElementById('admin-flav-id').value = f.id;
+      document.getElementById('admin-flav-name').value = f.name;
+      document.getElementById('admin-flav-desc').value = f.desc;
+      document.getElementById('admin-flav-price').value = parseFloat(f.price).toFixed(2);
+    }
+
+    async function deleteFlavorAdmin(id) {
+      if (!confirm('Excluir este sabor de pizza?')) return;
+      try {
+        const res = await fetch('/api/flavors/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        if (res.ok) {
+          showToast('Sabor excluído.', 'info');
+          loadAdminData();
+        }
+      } catch(e) {}
+    }
+
+    function renderAdminDrinksTable() {
+      const tbody = document.getElementById('admin-drinks-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = adminState.drinks.map(d => {
+        const pNum = parseFloat(d.price) || 0;
+        return `
+          <tr>
+            <td><strong>${d.icon || '🥤'} ${d.name}</strong></td>
+            <td><strong style="color: var(--color-primary);">R$ ${pNum.toFixed(2).replace('.', ',')}</strong></td>
+            <td>
+              <button class="btn btn-secondary btn-sm" onclick="editDrinkAdmin('${d.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
+              <button class="btn btn-secondary btn-sm" style="color: #ef4444;" onclick="deleteDrinkAdmin('${d.id}')"><i class="fa-solid fa-trash"></i> Excluir</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function handleAdminAddDrink(e) {
+      e.preventDefault();
+      const id = document.getElementById('admin-drink-id').value;
+      const name = document.getElementById('admin-drink-name').value.trim();
+      const price = parseFloat(document.getElementById('admin-drink-price').value);
+
+      try {
+        const res = await fetch('/api/drinks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, name, price })
+        });
+        if (res.ok) {
+          showToast('Bebida salva!', 'success');
+          document.getElementById('admin-drink-id').value = '';
+          document.getElementById('admin-drink-name').value = '';
+          document.getElementById('admin-drink-price').value = '';
+          loadAdminData();
+        }
+      } catch(e) {}
+    }
+
+    function editDrinkAdmin(id) {
+      const d = adminState.drinks.find(item => item.id === id);
+      if (!d) return;
+      document.getElementById('admin-drink-id').value = d.id;
+      document.getElementById('admin-drink-name').value = d.name;
+      document.getElementById('admin-drink-price').value = parseFloat(d.price).toFixed(2);
+    }
+
+    async function deleteDrinkAdmin(id) {
+      if (!confirm('Excluir esta bebida?')) return;
+      try {
+        const res = await fetch('/api/drinks/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        if (res.ok) {
+          showToast('Bebida excluída.', 'info');
+          loadAdminData();
+        }
+      } catch(e) {}
+    }
+
+    function renderAdminLoyaltyTables() {
+      // Rewards Table
+      const rBody = document.getElementById('admin-rewards-table-body');
+      if (rBody) {
+        rBody.innerHTML = adminState.rewards.map(r => {
+          const valNum = parseFloat(r.value || 0);
+          return `
+            <tr>
+              <td><strong>${r.icon || '🎁'} ${r.name}</strong></td>
+              <td><strong style="color: var(--color-primary);">${r.points} Pontos</strong></td>
+              <td>R$ ${valNum.toFixed(2).replace('.', ',')}</td>
+              <td>
+                <button class="btn btn-secondary btn-sm" onclick="editRewardAdmin('${r.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
+                <button class="btn btn-secondary btn-sm" style="color: #ef4444;" onclick="deleteRewardAdmin('${r.id}')"><i class="fa-solid fa-trash"></i> Excluir</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Customers Table
+      const cBody = document.getElementById('admin-customers-table-body');
+      if (cBody) {
+        if (adminState.customers.length === 0) {
+          cBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--color-gray);">Nenhum cliente cadastrado ainda.</td></tr>`;
+          return;
+        }
+
+        cBody.innerHTML = adminState.customers.map(c => `
+          <tr>
+            <td><strong>${c.name}</strong></td>
+            <td>📱 ${c.phone}</td>
+            <td><strong style="color: var(--color-primary); font-size: 1.05rem;">${c.points} pts</strong></td>
+            <td>
+              <div style="display: flex; gap: 0.3rem;">
+                <input type="number" id="cust-pts-input-${c.phone}" value="${c.points}" style="width: 80px; padding: 0.3rem; font-size: 0.8rem;" />
+                <button class="btn btn-gold btn-sm" onclick="saveCustomerPointsAdmin('${c.phone}')">Salvar</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    async function handleAdminAddReward(e) {
+      e.preventDefault();
+      const id = document.getElementById('admin-reward-id').value;
+      const name = document.getElementById('admin-reward-name').value.trim();
+      const points = parseInt(document.getElementById('admin-reward-points').value, 10);
+      const value = parseFloat(document.getElementById('admin-reward-value').value);
+
+      try {
+        const res = await fetch('/api/rewards', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, name, points, value, type: 'discount' })
+        });
+        if (res.ok) {
+          showToast('Prêmio salvo!', 'success');
+          document.getElementById('admin-reward-id').value = '';
+          document.getElementById('admin-reward-name').value = '';
+          document.getElementById('admin-reward-points').value = '';
+          document.getElementById('admin-reward-value').value = '';
+          loadAdminData();
+        }
+      } catch(e) {}
+    }
+
+    function editRewardAdmin(id) {
+      const r = adminState.rewards.find(item => item.id === id);
+      if (!r) return;
+      document.getElementById('admin-reward-id').value = r.id;
+      document.getElementById('admin-reward-name').value = r.name;
+      document.getElementById('admin-reward-points').value = r.points;
+      document.getElementById('admin-reward-value').value = parseFloat(r.value || 0).toFixed(2);
+    }
+
+    async function deleteRewardAdmin(id) {
+      if (!confirm('Excluir este prêmio do catálogo?')) return;
+      try {
+        const res = await fetch('/api/rewards/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        if (res.ok) {
+          showToast('Prêmio excluído.', 'info');
+          loadAdminData();
+        }
+      } catch(e) {}
+    }
+
+    async function saveCustomerPointsAdmin(phone) {
+      const input = document.getElementById(`cust-pts-input-${phone}`);
+      if (!input) return;
+      const newPts = parseInt(input.value, 10);
+
+      try {
+        const res = await fetch('/api/customers/update-points', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, points: newPts })
+        });
+        if (res.ok) {
+          showToast('Pontos do cliente atualizados!', 'success');
+          loadAdminData();
+        }
+      } catch(e) {}
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      
+      let icon = 'fa-info-circle';
+      if (type === 'success') icon = 'fa-circle-check';
+      if (type === 'warning') icon = 'fa-triangle-exclamation';
+
+      toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
