@@ -1,0 +1,7 @@
+[
+  { "id": "drk_1", "name": "🥤 Guaraná Kuat 2 Litros", "price": 10.00, "icon": "🍾" },
+  { "id": "drk_2", "name": "🥤 Coca-Cola 2 Litros", "price": 12.00, "icon": "🍾" },
+  { "id": "drk_3", "name": "🥤 Coca-Cola Lata 350ml", "price": 6.00, "icon": "🥤" },
+  { "id": "drk_4", "name": "🍋 Guaraná Antarctica Lata 350ml", "price": 6.00, "icon": "🥤" },
+  { "id": "drk_5", "name": "💧 Água Mineral sem Gás 500ml", "price": 4.00, "icon": "💧" }
+]
