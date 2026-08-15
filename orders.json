@@ -1,0 +1,13 @@
+[
+  {
+    "id": "REI-101",
+    "clientName": "Cliente Centro BC",
+    "clientPhone": "47988802254",
+    "address": "Av. Brasil, 1500 - Centro, Balneário Camboriú",
+    "items": "1x Oferta 01 (Pizza Calabresa Acebolada / Frango com Catupiry, Borda Catupiry) + Refri Kuat 2L",
+    "total": 60.90,
+    "paymentMethod": "PIX",
+    "status": "EM_PREPARO",
+    "date": "Hoje, 19:15"
+  }
+]
