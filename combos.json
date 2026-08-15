@@ -1,0 +1,18 @@
+[
+  {
+    "id": "combo_1",
+    "name": "Oferta 01: 1 Pizza Grande + Refri Kuat 2L",
+    "desc": "1 Pizza Grande (8 Fatias) + 1 Refrigerante Kuat 2 Litros",
+    "price": 54.90,
+    "pizzasCount": 1,
+    "badge": "OFERTA 01"
+  },
+  {
+    "id": "combo_2",
+    "name": "Oferta 02: 2 Pizzas Grandes + Refri Kuat 2L",
+    "desc": "2 Pizzas Grandes (8 Fatias cada) + 1 Refrigerante Kuat 2 Litros",
+    "price": 99.90,
+    "pizzasCount": 2,
+    "badge": "OFERTA 02 - MAIS VENDIDO"
+  }
+]
