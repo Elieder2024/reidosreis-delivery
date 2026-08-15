@@ -1,0 +1,12 @@
+[
+  { "id": "flav_1", "name": "Mussarela", "desc": "Molho de tomate e mussarela.", "price": 49.90 },
+  { "id": "flav_2", "name": "Mussaalho", "desc": "Molho de tomate, mussarela e alho frito.", "price": 49.90 },
+  { "id": "flav_3", "name": "Mussarela e milho", "desc": "Molho de tomate, mussarela e milho verde.", "price": 49.90 },
+  { "id": "flav_4", "name": "Bacon", "desc": "Molho de tomate, mussarela e bacon.", "price": 49.90 },
+  { "id": "flav_5", "name": "Bacon e milho", "desc": "Molho de tomate, mussarela, bacon e milho verde.", "price": 49.90 },
+  { "id": "flav_6", "name": "Calabresa", "desc": "Molho de tomate, mussarela e calabresa fatiada.", "price": 49.90 },
+  { "id": "flav_7", "name": "Calabresa acebolada", "desc": "Molho de tomate, mussarela, calabresa fatiada e cebola.", "price": 49.90 },
+  { "id": "flav_8", "name": "Frango com catupiry", "desc": "Molho de tomate, mussarela, frango desfiado temperado e catupiry.", "price": 49.90 },
+  { "id": "flav_9", "name": "Portuguesa", "desc": "Molho de tomate, presunto, mussarela, tomate, pimentão, cebola, ovo e orégano.", "price": 49.90 },
+  { "id": "flav_10", "name": "Bauru", "desc": "Molho de tomate, mussarela, presunto, tomate e catupiry.", "price": 49.90 }
+]
