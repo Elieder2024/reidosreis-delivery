@@ -117,6 +117,7 @@ function renderCombosCatalog() {
 
   container.innerHTML = state.combos.map(c => {
     const pNum = parseFloat(c.price) || 0;
+    const count = parseInt(c.pizzasCount, 10) || 1;
     return `
       <div class="combo-card">
         <div class="combo-badge">${c.badge || 'OFERTA'}</div>
@@ -124,7 +125,7 @@ function renderCombosCatalog() {
         <p class="combo-desc">${c.desc}</p>
         <div class="combo-price-row">
           <span class="combo-price">R$ ${pNum.toFixed(2).replace('.', ',')}</span>
-          <button type="button" class="btn btn-gold" onclick="openPizzaBuilderModal('combo', '${c.id}', '${c.name}', ${pNum})">
+          <button type="button" class="btn btn-gold" onclick="openPizzaBuilderModal('combo', '${c.id}', '${c.name}', ${pNum}, ${count})">
             <i class="fa-solid fa-pizza-slice"></i> Escolher Sabores
           </button>
         </div>
@@ -150,7 +151,7 @@ function renderFlavorsCatalog() {
           <p>${f.desc}</p>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
             <span style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 900; color: var(--color-primary);">R$ ${pNum.toFixed(2).replace('.', ',')}</span>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="openPizzaBuilderModal('single', '${f.id}', '${f.name}', ${pNum})">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="openPizzaBuilderModal('single', '${f.id}', '${f.name}', ${pNum}, 1)">
               <i class="fa-solid fa-plus text-gold"></i> Montar
             </button>
           </div>
@@ -181,50 +182,124 @@ function renderDrinksCatalog() {
   }).join('');
 }
 
-// Pizza Builder Modal Logic
-function openPizzaBuilderModal(mode, id, title, fallbackPrice) {
+// Pizza Builder Modal Logic (Suporta Combos de 1 ou mais Pizzas)
+function openPizzaBuilderModal(mode, id, title, fallbackPrice, pizzasCount = 1) {
   try {
     let basePrice = parseFloat(fallbackPrice) || 49.90;
-    state.activeBuilderCombo = { mode, id, title, basePrice };
+    state.activeBuilderCombo = { mode, id, title, basePrice, pizzasCount };
 
     const titleEl = document.getElementById('builder-modal-title');
     const priceEl = document.getElementById('builder-modal-price');
     if (titleEl) titleEl.innerText = title;
     if (priceEl) priceEl.innerText = `Valor Base: R$ ${basePrice.toFixed(2).replace('.', ',')}`;
 
-    // Populate Flavors Radio 1 & Radio 2
-    const f1Container = document.getElementById('flavor-1-container');
-    const f2Container = document.getElementById('flavor-2-container');
+    const builderBody = document.getElementById('pizza-builder-dynamic-body');
+    if (!builderBody) return;
 
-    const flavorsHtml1 = state.flavors.map((f, idx) => `
-      <label class="radio-option">
-        <input type="radio" name="pizza-flavor-1" value="${f.name}" ${idx === 0 ? 'checked' : ''} />
-        <div class="radio-content">
-          <strong>🍕 ${f.name}</strong>
-          <small>${f.desc}</small>
+    let html = '';
+
+    for (let p = 1; p <= pizzasCount; p++) {
+      const pizzaLabel = pizzasCount > 1 ? `🍕 PIZZA ${p} DA OFERTA (8 FATIAS)` : `🍕 SABORES DA PIZZA (8 FATIAS)`;
+      
+      html += `
+        <div class="catalog-group ${p > 1 ? 'margin-top-md' : ''}" style="${pizzasCount > 1 ? 'background: #fffbe6; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);' : ''}">
+          <h4 class="step-header" style="color: var(--color-primary); font-size: 1.05rem;">${pizzaLabel}</h4>
+          
+          <div class="options-group margin-top-sm">
+            <label class="radio-option">
+              <input type="radio" name="pizza-${p}-split-mode" value="1" onchange="togglePizzaSplitMode(${p}, '1')" checked />
+              <div class="radio-content">
+                <strong>🍕 1 Sabor Inteiro</strong>
+                <small>Toda a pizza com 1 sabor único</small>
+              </div>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="pizza-${p}-split-mode" value="2" onchange="togglePizzaSplitMode(${p}, '2')" />
+              <div class="radio-content">
+                <strong>🌓 2 Sabores (Meio a Meio)</strong>
+                <small>Escolha 2 sabores (metade/metade)</small>
+              </div>
+            </label>
+          </div>
+
+          <!-- Sabor 1 -->
+          <div class="margin-top-sm">
+            <strong style="font-size: 0.82rem; color: var(--color-dark); display: block; margin-bottom: 0.3rem;" id="label-pizza-${p}-f1">
+              ${pizzasCount > 1 ? `Escolha o Sabor da Pizza ${p}:` : 'Escolha o Sabor:'}
+            </strong>
+            <div class="options-group">
+              ${state.flavors.map((f, idx) => `
+                <label class="radio-option">
+                  <input type="radio" name="pizza-${p}-flavor-1" value="${f.name}" ${idx === 0 ? 'checked' : ''} />
+                  <div class="radio-content">
+                    <strong>🍕 ${f.name}</strong>
+                    <small>${f.desc}</small>
+                  </div>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Sabor 2 (Meio a Meio) -->
+          <div class="margin-top-sm" id="section-pizza-${p}-f2" style="display: none;">
+            <strong style="font-size: 0.82rem; color: var(--color-dark); display: block; margin-bottom: 0.3rem;">
+              Escolha o 2º Sabor (Metade 2):
+            </strong>
+            <div class="options-group">
+              ${state.flavors.map((f, idx) => `
+                <label class="radio-option">
+                  <input type="radio" name="pizza-${p}-flavor-2" value="${f.name}" ${idx === 1 ? 'checked' : ''} />
+                  <div class="radio-content">
+                    <strong>🍕 ${f.name}</strong>
+                    <small>${f.desc}</small>
+                  </div>
+                </label>
+              `).join('')}
+            </div>
+          </div>
         </div>
-      </label>
-    `).join('');
+      `;
+    }
 
-    const flavorsHtml2 = state.flavors.map((f, idx) => `
-      <label class="radio-option">
-        <input type="radio" name="pizza-flavor-2" value="${f.name}" ${idx === 1 ? 'checked' : ''} />
-        <div class="radio-content">
-          <strong>🍕 ${f.name}</strong>
-          <small>${f.desc}</small>
+    // Borda Recheada section
+    html += `
+      <div class="catalog-group margin-top-md">
+        <h4 class="step-header">Borda Recheada <span style="font-size: 0.75rem; font-weight: 500; color: var(--color-gray);">(Opcional)</span></h4>
+        <div class="options-group">
+          <label class="radio-option">
+            <input type="radio" name="pizza-border" value="Sem Borda" data-price="0.00" onchange="calcPizzaBuilderTotal()" checked />
+            <div class="radio-content">
+              <strong>❌ Sem Borda Recheada</strong>
+              <small>Massa tradicional quentinha</small>
+            </div>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pizza-border" value="Borda de Catupiry" data-price="6.00" onchange="calcPizzaBuilderTotal()" />
+            <div class="radio-content">
+              <strong>🧀 Borda de Catupiry (+ R$ 6,00)</strong>
+              <small>Recheada com catupiry cremoso</small>
+            </div>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pizza-border" value="Borda de Cheddar" data-price="6.00" onchange="calcPizzaBuilderTotal()" />
+            <div class="radio-content">
+              <strong>🧀 Borda de Cheddar (+ R$ 6,00)</strong>
+              <small>Recheada com queijo cheddar</small>
+            </div>
+          </label>
         </div>
-      </label>
-    `).join('');
+      </div>
 
-    if (f1Container) f1Container.innerHTML = flavorsHtml1;
-    if (f2Container) f2Container.innerHTML = flavorsHtml2;
+      <!-- Observações -->
+      <div class="catalog-group margin-top-md">
+        <h4 class="step-header">Observações do Pedido</h4>
+        <div class="form-group">
+          <textarea id="pizza-notes" rows="2" placeholder="Ex: Tirar a cebola de uma das pizzas..."></textarea>
+        </div>
+      </div>
+    `;
 
-    // Reset split mode to 1
-    togglePizzaSplitMode('1');
-
-    const notesEl = document.getElementById('pizza-notes');
-    if (notesEl) notesEl.value = '';
-
+    builderBody.innerHTML = html;
     calcPizzaBuilderTotal();
   } catch(e) {
     console.error('Erro ao abrir modal builder de pizza:', e);
@@ -245,16 +320,16 @@ function closePizzaBuilderModal() {
   }
 }
 
-function togglePizzaSplitMode(val) {
-  const sec2 = document.getElementById('section-flavor-2');
-  const label1 = document.getElementById('label-flavor-1');
+function togglePizzaSplitMode(p, modeVal) {
+  const sec2 = document.getElementById(`section-pizza-${p}-f2`);
+  const label1 = document.getElementById(`label-pizza-${p}-f1`);
 
-  if (val === '2') {
+  if (modeVal === '2') {
     if (sec2) sec2.style.display = 'block';
-    if (label1) label1.innerText = '2. Escolha o 1º Sabor (Metade 1) *';
+    if (label1) label1.innerText = `Escolha o 1º Sabor (Metade 1):`;
   } else {
     if (sec2) sec2.style.display = 'none';
-    if (label1) label1.innerText = '2. Escolha o Sabor da Pizza *';
+    if (label1) label1.innerText = `Escolha o Sabor:`;
   }
 }
 
@@ -277,24 +352,33 @@ function calcPizzaBuilderTotal() {
 function addPizzaToCartFromBuilder() {
   if (!state.activeBuilderCombo) return;
 
-  const { title, basePrice } = state.activeBuilderCombo;
-  const splitMode = document.querySelector('input[name="pizza-split-mode"]:checked').value;
+  const { title, basePrice, pizzasCount } = state.activeBuilderCombo;
+  let pizzaDetailsList = [];
 
-  const f1 = document.querySelector('input[name="pizza-flavor-1"]:checked').value;
-  let flavorText = `Sabor: ${f1}`;
+  for (let p = 1; p <= (pizzasCount || 1); p++) {
+    const splitInput = document.querySelector(`input[name="pizza-${p}-split-mode"]:checked`);
+    const splitMode = splitInput ? splitInput.value : '1';
 
-  if (splitMode === '2') {
-    const f2 = document.querySelector('input[name="pizza-flavor-2"]:checked').value;
-    flavorText = `Meio a Meio: Metade ${f1} / Metade ${f2}`;
+    const f1Input = document.querySelector(`input[name="pizza-${p}-flavor-1"]:checked`);
+    const f1 = f1Input ? f1Input.value : 'Mussarela';
+
+    if (splitMode === '2') {
+      const f2Input = document.querySelector(`input[name="pizza-${p}-flavor-2"]:checked`);
+      const f2 = f2Input ? f2Input.value : 'Calabresa';
+      pizzaDetailsList.push(`Pizza ${p}: 🌓 Metade ${f1} / Metade ${f2}`);
+    } else {
+      pizzaDetailsList.push(`Pizza ${p}: 🍕 ${f1}`);
+    }
   }
 
   const borderInput = document.querySelector('input[name="pizza-border"]:checked');
   const borderName = borderInput ? borderInput.value : 'Sem Borda';
   const borderFee = borderInput ? (parseFloat(borderInput.getAttribute('data-price')) || 0) : 0;
 
-  const notes = document.getElementById('pizza-notes').value.trim();
+  const notesEl = document.getElementById('pizza-notes');
+  const notes = notesEl ? notesEl.value.trim() : '';
 
-  let detailsText = `${flavorText} | Borda: ${borderName}`;
+  let detailsText = pizzaDetailsList.join(' | ') + ` | Borda: ${borderName}`;
   if (notes) detailsText += ` | Obs: ${notes}`;
 
   const itemTotal = basePrice + borderFee;
